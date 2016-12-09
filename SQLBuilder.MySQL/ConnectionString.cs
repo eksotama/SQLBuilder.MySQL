@@ -401,6 +401,15 @@ namespace SQLBuilder.MySQL {
         public bool Pooling { get; set; }
         #endregion
 
+        #region Constructor Method
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ConnectionString() {
+            this._InitProperties();
+        }
+        #endregion
+
         #region Public Override Method
         /// <summary>
         /// Generates the connection string.
@@ -609,6 +618,60 @@ namespace SQLBuilder.MySQL {
                 lstConnections.Add("Pooling=false");
             }
             return String.Join(";", lstConnections.ToArray());
+        }
+        #endregion
+
+        #region Private Method
+        /// <summary>
+        /// Initializes the properties.
+        /// </summary>
+        private void _InitProperties() {
+            this.AllowBatch = true;
+            this.AllowUserVariables = false;
+            this.AllowZeroDateTime = false;
+            this.AutoEnlist = true;
+            this.CheckParameters = true;
+            this.ConnectionTimeout = 15;
+            this.ConvertZeroDateTime = false;
+            this.DefaultCommandTimeout = 30;
+            this.DefaultTableCacheAge = 60;
+            this.EnableSessionExpireCallback = false;
+            this.UseSSL = false;
+            this.FunctionsReturnString = false;
+            this.Host = "localhost";
+            this.IgnorePrepare = true;
+            this.IncludeSecurityAsserts = false;
+            this.Database = "mysql";
+            this.InteractiveSession = false;
+            this.IntegratedSecurity = false;
+            this.KeepAlive = 0;
+            this.Logging = false;
+            this.OldGuids = false;
+            this.UseOldSyntax = false;
+            this.PersistSecurityInfo = false;
+            this.PipeName = "mysql";
+            this.Port = 3306;
+            this.ProcedureCacheSize = 25;
+            this.ConnectionProtocol = ConnectionProtocols.Socket;
+            this.Replication = false;
+            this.RespectBinaryFlags = true;
+            this.SharedMemoryName = "MYSQL";
+            this.SqlServerMode = false;
+            this.SslMode = SslModes.None;
+            this.TableCaching = false;
+            this.TreatBlobsAsUTF8 = false;
+            this.TreatTinyAsBoolean = true;
+            this.UseAffectedRows = false;
+            this.UseProcedureBodies = true;
+            this.UseCompression = false;
+            this.UseUsageAdvisor = false;
+            this.UsePerformanceMonitor = false;
+            this.CacheServerProperties = false;
+            this.ConnectionLifeTime = 0;
+            this.ConnectionReset = false;
+            this.MaximumPoolsize = 100;
+            this.MinimumPoolSize = 0;
+            this.Pooling = true;
         }
         #endregion
     }
