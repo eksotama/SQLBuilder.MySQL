@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+
+namespace SQLBuilder.MySQL.Builder {
+    /// <summary>
+    /// Base Query Builder Abstract Class
+    /// </summary>
+    public abstract class BaseQuery {
+        #region Protected Properties
+        /// <summary>
+        /// Reserved Keywords property.
+        /// </summary>
+        protected List<string> _ReservedKeywords { get; private set; }
+
+        /// <summary>
+        /// Virtual Fields property.
+        /// </summary>
+        protected Dictionary<string, string> _VirtualFields { get; private set; }
+
+        /// <summary>
+        /// Database property.
+        /// </summary>
+        protected string _Database { get; set; }
+
+        /// <summary>
+        /// Table property.
+        /// </summary>
+        protected string _Table { get; set; }
+
+        /// <summary>
+        /// Table Alias property.
+        /// </summary>
+        protected string _TableAlias { get; set; }
+
+        /// <summary>
+        /// Parameters property.
+        /// </summary>
+        protected Dictionary<string, object> _Parameters { get; private set; }
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Gets the parameters.
+        /// </summary>
+        /// <returns>The parameters.</returns>
+        public Dictionary<string, object> GetParameters() {
+            return this._Parameters;
+        }
+
+        /// <summary>
+        /// Prints the parameters to the output window.
+        /// </summary>
+        public void PrintParameters() {
+            Debug.WriteLine(null);
+            Debug.WriteLine("--------------------------------------------------");
+            if (this._Parameters == null || this._Parameters.Count == 0) {
+                Debug.WriteLine("No parameters available.");
+                return;
+            }
+            Debug.WriteLine("MySQL Parameters:");
+            int intCounter = 1;
+            foreach (var kvp in this._Parameters) {
+                Debug.WriteLine(String.Format("Parameter {0}:", intCounter));
+                Debug.WriteLine(String.Format("Type:\t{0}", kvp.Value != null ? kvp.Value.GetType() : null));
+                Debug.WriteLine(String.Format("Name:\t{0}", kvp.Key));
+                Debug.WriteLine(String.Format("Value:\t{0}", kvp.Value));
+                Debug.WriteLine(null);
+                intCounter++;
+            }
+        }
+
+        /// <summary>
+        /// Merges the parameters with other parameters.
+        /// </summary>
+        /// <param name="Parameters">The parameters to be merged.</param>
+        public void MergeParameters(params Dictionary<string, object>[] Parameters) {
+            if (Parameters == null || Parameters.Length == 0) {
+                return;
+            }
+            foreach (var Parameter in Parameters) {
+                foreach (var kvp in Parameter) {
+                    if (this._Parameters.ContainsKey(kvp.Key)) {
+                        this._Parameters[kvp.Key] = kvp.Value;
+                    } else {
+                        this._Parameters.Add(kvp.Key, kvp.Value);
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Protected Methods
+        /// <summary>
+        /// Sets a virtual field to be used in the query.
+        /// </summary>
+        /// <param name="Name">The name of the virtual field.</param>
+        /// <param name="Expression">The query expression.</param>
+        protected void _SetVirtualField(string Name, string Expression) {
+            if (Name.IsNullOrWhiteSpace()) {
+                throw new ArgumentException(String.Format("Name argument '{0}' should not be empty.", Name));
+            }
+            if (Regex.IsMatch(Name, @"\W")) {
+                throw new ArgumentException(String.Format("Name argument '{0}' should only contain any word character (letter, number, underscore).", Name));
+            }
+            if (Expression.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Expression argument should not be empty.");
+            }
+            if (this._VirtualFields.ContainsKey(Name)) {
+                this._VirtualFields[Name] = Expression;
+            } else {
+                this._VirtualFields.Add(Name, Expression);
+            }
+        }
+
+        /// <summary>
+        /// Sets a parameter to be used in the query.
+        /// </summary>
+        /// <param name="Name">The name of the parameter.</param>
+        /// <param name="Value">The value of the parameter.</param>
+        protected void _SetParameter(string Name, object Value) {
+            if (Name.IsNullOrWhiteSpace()) {
+                throw new ArgumentException(String.Format("Name argument '{0}' should not be empty.", Name));
+            }
+            if (!Regex.IsMatch(Name, @"^\@[\w]+$")) {
+                throw new ArgumentException(String.Format("Name argument '{0}' should only contain '@' and any word character (letter, number, underscore) after.", Name));
+            }
+            if (this._Parameters.ContainsKey(Name)) {
+                this._Parameters[Name] = Value;
+            } else {
+                this._Parameters.Add(Name, Value);
+            }
+        }
+
+        /// <summary>
+        /// Checks if a value is numeric.
+        /// </summary>
+        /// <param name="Value">The value to be checked.</param>
+        /// <returns>True if numeric. Otherwise, false.</returns>
+        protected bool _IsNumeric(object Value) {
+            if (Value is string) {
+                return Regex.IsMatch(Value.ToString(), @"^(?:\+|\-)?(?:0|[1-9][\d]*)(?:\.[\d]+)?$");
+            } else {
+                return Value is sbyte || Value is byte || Value is short || Value is ushort || Value is int || Value is uint || Value is long || Value is ulong || Value is float || Value is double || Value is decimal;
+            }
+        }
+        #endregion
+    }
+}
