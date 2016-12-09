@@ -10,11 +10,6 @@ namespace SQLBuilder.MySQL.Builder {
     public abstract class BaseQuery {
         #region Protected Properties
         /// <summary>
-        /// Reserved Keywords property.
-        /// </summary>
-        protected List<string> _ReservedKeywords { get; private set; }
-
-        /// <summary>
         /// Virtual Fields property.
         /// </summary>
         protected Dictionary<string, string> _VirtualFields { get; private set; }
@@ -38,6 +33,15 @@ namespace SQLBuilder.MySQL.Builder {
         /// Parameters property.
         /// </summary>
         protected Dictionary<string, object> _Parameters { get; private set; }
+        #endregion
+
+        #region Constructor
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public BaseQuery() {
+            this._InitProperties();
+        }
         #endregion
 
         #region Public Methods
@@ -144,6 +148,16 @@ namespace SQLBuilder.MySQL.Builder {
             } else {
                 return Value is sbyte || Value is byte || Value is short || Value is ushort || Value is int || Value is uint || Value is long || Value is ulong || Value is float || Value is double || Value is decimal;
             }
+        }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// Initializes the properties.
+        /// </summary>
+        private void _InitProperties() {
+            this._VirtualFields = new Dictionary<string, string>();
+            this._Parameters = new Dictionary<string, object>();
         }
         #endregion
     }
