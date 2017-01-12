@@ -39,6 +39,9 @@ namespace SQLBuilder.MySQL.Builder {
             }
             this._Table = Table;
             if (!TableAlias.IsNullOrWhiteSpace()) {
+                if (!this._IsValidField(TableAlias)) {
+                    throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+                }
                 this._TableAlias = TableAlias;
             } else {
                 this._TableAlias = Table;
@@ -72,6 +75,9 @@ namespace SQLBuilder.MySQL.Builder {
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
             }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
             this._From = String.Format("({0}) AS {1}", strQuery, TableAlias);
             this._TableAlias = TableAlias;
             this._InitProperties();
@@ -95,6 +101,9 @@ namespace SQLBuilder.MySQL.Builder {
             }
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
             }
             this._From = String.Format("(({0})) AS {1}", String.Join(") UNION (", lstQueries.ToArray()), TableAlias);
             this._TableAlias = TableAlias;
@@ -152,7 +161,7 @@ namespace SQLBuilder.MySQL.Builder {
                     }
                     Expression = this._VirtualFields[Expression];
                 }
-                this._Fields.Add(String.Format("{0}{1}", Expression, Alias.IsNullOrWhiteSpace() ? null : String.Format(" AS {0}", Alias)));
+                this._Fields.Add(String.Format("{0}{1}", Expression, Alias.IsNullOrWhiteSpace() ? null : String.Format(" AS {0}", this._EncloseBackTick(Alias))));
             }
             return this;
         }
@@ -205,7 +214,7 @@ namespace SQLBuilder.MySQL.Builder {
                 if (Alias.IsNullOrWhiteSpace()) {
                     throw new ArgumentException("Alias argument should not be empty.");
                 }
-                this._Fields.Add(String.Format("({0}) AS {1}", strQuery, Alias));
+                this._Fields.Add(String.Format("({0}) AS {1}", strQuery, this._EncloseBackTick(Alias)));
             }
             return this;
         }
@@ -237,6 +246,9 @@ namespace SQLBuilder.MySQL.Builder {
             }
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
             }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
@@ -274,6 +286,9 @@ namespace SQLBuilder.MySQL.Builder {
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
             }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
             }
@@ -304,6 +319,9 @@ namespace SQLBuilder.MySQL.Builder {
         public SelectQuery SetLeftJoin(string TableAlias, string ConditionStatement) {
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
             }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
@@ -343,6 +361,9 @@ namespace SQLBuilder.MySQL.Builder {
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
             }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
             }
@@ -374,6 +395,9 @@ namespace SQLBuilder.MySQL.Builder {
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
             }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
             }
@@ -398,6 +422,9 @@ namespace SQLBuilder.MySQL.Builder {
             }
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
             }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
@@ -435,6 +462,9 @@ namespace SQLBuilder.MySQL.Builder {
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
             }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
             }
@@ -465,6 +495,9 @@ namespace SQLBuilder.MySQL.Builder {
         public SelectQuery SetRightJoin(string TableAlias, string ConditionStatement) {
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
             }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
@@ -504,6 +537,9 @@ namespace SQLBuilder.MySQL.Builder {
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
             }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
             }
@@ -512,7 +548,7 @@ namespace SQLBuilder.MySQL.Builder {
         }
 
         /// <summary>
-        /// Adds a LEFT JOIN clause.
+        /// Adds a RIGHT JOIN clause.
         /// </summary>
         /// <param name="Selects">The list of SelectQuery instances.</param>
         /// <param name="TableAlias">The alias of the table.</param>
@@ -535,10 +571,189 @@ namespace SQLBuilder.MySQL.Builder {
             if (TableAlias.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("TableAlias argument should not be empty.");
             }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
             if (ConditionStatement.IsNullOrWhiteSpace()) {
                 throw new ArgumentException("Condition argument should not be empty.");
             }
             this._Joins.Add(String.Format("RIGHT JOIN ({0}) AS {1} ON ({2})", String.Format("({0})", String.Join(") UNION (", lstQueries.ToArray())), TableAlias, ConditionStatement));
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a INNER JOIN clause.
+        /// </summary>
+        /// <param name="Database">The database of the table to be joined.</param>
+        /// <param name="Table">The table to be joined.</param>
+        /// <param name="TableAlias">The alias of the table.</param>
+        /// <param name="ConditionStatement">The condition statment/s of the joined table.</param>
+        /// <returns>The current instance of this class.</returns>
+        public SelectQuery SetInnerJoin(string Database, string Table, string TableAlias, string ConditionStatement) {
+            if (Database.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Database argument should not be empty.");
+            }
+            if (Table.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Table argument should not be empty.");
+            }
+            if (TableAlias.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
+            if (ConditionStatement.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Condition argument should not be empty.");
+            }
+            this._Joins.Add(String.Format("INNER JOIN {0}.{1}{2} ON ({3})", Database, Table, !Table.Equals(TableAlias) ? String.Format(" AS {0}", TableAlias) : null, ConditionStatement));
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a INNER JOIN clause.
+        /// </summary>
+        /// <param name="Database">The database of the table to be joined.</param>
+        /// <param name="Table">The table to be joined.</param>
+        /// <param name="IncrementTableAlias">The alias of the table using the incremented table name.</param>
+        /// <param name="ConditionStatement">The condition statment/s of the joined table.</param>
+        /// <returns>The current instance of this class.</returns>
+        public SelectQuery SetInnerJoin(string Database, string Table, uint IncrementTableAlias, string ConditionStatement) {
+            if (IncrementTableAlias == 0) {
+                return this.SetInnerJoin(Database, Table, Table, ConditionStatement);
+            }
+            return this.SetInnerJoin(Database, Table, Table + "_" + IncrementTableAlias, ConditionStatement);
+        }
+
+        /// <summary>
+        /// Adds a INNER JOIN clause.
+        /// </summary>
+        /// <param name="Table">The table to be joined.</param>
+        /// <param name="TableAlias">The alias of the table.</param>
+        /// <param name="ConditionStatement">The condition statment/s of the joined table.</param>
+        /// <returns>The current instance of this class.</returns>
+        public SelectQuery SetInnerJoin(string Table, string TableAlias, string ConditionStatement) {
+            if (Table.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Table argument should not be empty.");
+            }
+            if (TableAlias.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
+            if (ConditionStatement.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Condition argument should not be empty.");
+            }
+            this._Joins.Add(String.Format("INNER JOIN {0}.{1}{2} ON ({3})", this._Database, Table, !Table.Equals(TableAlias) ? String.Format(" AS {0}", TableAlias) : null, ConditionStatement));
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a INNER JOIN clause.
+        /// </summary>
+        /// <param name="Table">The table to be joined.</param>
+        /// <param name="IncrementTableAlias">The alias of the table using the incremented table name.</param>
+        /// <param name="ConditionStatement">The condition statment/s of the joined table.</param>
+        /// <returns>The current instance of this class.</returns>
+        public SelectQuery SetInnerJoin(string Table, uint IncrementTableAlias, string ConditionStatement) {
+            if (IncrementTableAlias == 0) {
+                return this.SetInnerJoin(Table, Table, ConditionStatement);
+            }
+            return this.SetInnerJoin(Table, Table + "_" + IncrementTableAlias, ConditionStatement);
+        }
+
+        /// <summary>
+        /// Adds a INNER JOIN clause.
+        /// </summary>
+        /// <param name="TableAlias">The alias of the table.</param>
+        /// <param name="ConditionStatement">The condition statment/s of the joined table.</param>
+        /// <returns>The current instance of this class.</returns>
+        public SelectQuery SetInnerJoin(string TableAlias, string ConditionStatement) {
+            if (TableAlias.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
+            if (ConditionStatement.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Condition argument should not be empty.");
+            }
+            this._Joins.Add(String.Format("INNER JOIN {0}.{1}{2} ON ({3})", this._Database, this._Table, !this._Table.Equals(TableAlias) ? String.Format(" AS {0}", TableAlias) : null, ConditionStatement));
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a INNER JOIN clause.
+        /// </summary>
+        /// <param name="IncrementTableAlias">The alias of the table using the incremented table name.</param>
+        /// <param name="ConditionStatement">The condition statment/s of the joined table.</param>
+        /// <returns>The current instance of this class.</returns>
+        public SelectQuery SetInnerJoin(uint IncrementTableAlias, string ConditionStatement) {
+            if (IncrementTableAlias == 0) {
+                return this.SetInnerJoin(this._Table, ConditionStatement);
+            }
+            return this.SetInnerJoin(this._Table + "_" + IncrementTableAlias, ConditionStatement);
+        }
+
+        /// <summary>
+        /// Adds a INNER JOIN clause.
+        /// </summary>
+        /// <param name="Select">The SelectQuery instance.</param>
+        /// <param name="TableAlias">The alias of the table.</param>
+        /// <param name="ConditionStatement">The condition statment/s of the joined table.</param>
+        /// <returns>The current instance of this class.</returns>
+        public SelectQuery SetInnerJoin(SelectQuery Select, string TableAlias, string ConditionStatement) {
+            if (Select == null) {
+                throw new ArgumentException("Select argument should not be null.");
+            }
+            string strQuery = Select.ToString();
+            if (strQuery.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Select argument should not be empty.");
+            }
+            if (TableAlias.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
+            if (ConditionStatement.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Condition argument should not be empty.");
+            }
+            this._Joins.Add(String.Format("INNER JOIN ({0}) AS {1} ON ({2})", strQuery, TableAlias, ConditionStatement));
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a INNER JOIN clause.
+        /// </summary>
+        /// <param name="Selects">The list of SelectQuery instances.</param>
+        /// <param name="TableAlias">The alias of the table.</param>
+        /// <param name="ConditionStatement">The condition statment/s of the joined table.</param>
+        /// <returns>The current instance of this class.</returns>
+        public SelectQuery SetInnerJoin(List<SelectQuery> Selects, string TableAlias, string ConditionStatement) {
+            if (Selects == null) {
+                throw new ArgumentException("Selects argument should not be null.");
+            }
+            List<string> lstQueries = new List<string>();
+            foreach (var Select in Selects) {
+                if (Select == null) {
+                    throw new ArgumentException("A member of Selects argument should not be null.");
+                }
+                if (Select.ToString().IsNullOrWhiteSpace()) {
+                    throw new ArgumentException("A member of Selects argument should not be empty.");
+                }
+                lstQueries.Add(Select.ToString());
+            }
+            if (TableAlias.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("TableAlias argument should not be empty.");
+            }
+            if (!this._IsValidField(TableAlias)) {
+                throw new ArgumentException("TableAlias argument should only contain letters, numbers and/or underscores.");
+            }
+            if (ConditionStatement.IsNullOrWhiteSpace()) {
+                throw new ArgumentException("Condition argument should not be empty.");
+            }
+            this._Joins.Add(String.Format("INNER JOIN ({0}) AS {1} ON ({2})", String.Format("({0})", String.Join(") UNION (", lstQueries.ToArray())), TableAlias, ConditionStatement));
             return this;
         }
 
@@ -588,7 +803,11 @@ namespace SQLBuilder.MySQL.Builder {
                     if (strExpression.IsNullOrWhiteSpace()) {
                         continue;
                     }
-                    this._Groups.Add(strExpression);
+                    if (this._VirtualFields.ContainsKey(strExpression)) {
+                        this._Groups.Add(this._VirtualFields[strExpression]);
+                    } else {
+                        this._Groups.Add(strExpression);
+                    }
                 }
             }
             return this;
@@ -652,11 +871,7 @@ namespace SQLBuilder.MySQL.Builder {
                     if (strExpression.IsNullOrWhiteSpace()) {
                         continue;
                     }
-                    if (this._VirtualFields.ContainsKey(strExpression)) {
-                        lstExpression.Add(this._VirtualFields[strExpression]);
-                    } else {
-                        lstExpression.Add(strExpression);
-                    }
+                    lstExpression.Add(this._EncloseBackTick(strExpression));
                 }
                 if (lstExpression.Count > 0) {
                     this._Orders.Add(String.Format("{0} {1}", String.Join(", ", lstExpression.ToArray()), this._GetOrderDirection(Direction)));
@@ -707,7 +922,7 @@ namespace SQLBuilder.MySQL.Builder {
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT");
             if (this._Fields.Count > 0) {
-                sb.Append(String.Format(" {0}", String.Join(", ", this._Fields.ToArray())));
+                sb.Append(String.Format(" {0}", String.Join("\n,", this._Fields.ToArray())));
             } else {
                 sb.Append(" *");
             }
@@ -716,10 +931,10 @@ namespace SQLBuilder.MySQL.Builder {
                 sb.Append(String.Format("\n{0}", String.Join("\n", this._Joins.ToArray())));
             }
             if (this._Wheres.Count > 0) {
-                sb.Append(String.Format("\nWHERE ({0})", String.Join(" AND ", this._Wheres.ToArray())));
+                sb.Append(String.Format("\nWHERE ({0})", String.Join("\nAND ", this._Wheres.ToArray())));
             }
             if (this._Groups.Count > 0) {
-                string strGroupBy = String.Format("\nGROUP BY {0}", String.Join(", ", this._Groups.ToArray()));
+                string strGroupBy = String.Format("\nGROUP BY {0}", String.Join("\n,", this._Groups.ToArray()));
                 if (this._IsWithRollUp) {
                     sb.Append(strGroupBy);
                 } else {
@@ -730,10 +945,10 @@ namespace SQLBuilder.MySQL.Builder {
                 sb.Append(" WITH ROLLUP");
             }
             if (this._Havings.Count > 0) {
-                sb.Append(String.Format("\nHAVING ({0})", String.Join(" AND ", this._Havings.ToArray())));
+                sb.Append(String.Format("\nHAVING ({0})", String.Join("\nAND ", this._Havings.ToArray())));
             }
             if (this._Orders.Count > 0) {
-                sb.Append(String.Format("\nORDER BY {0}", String.Join(", ", this._Orders.ToArray())));
+                sb.Append(String.Format("\nORDER BY {0}", String.Join("\n,", this._Orders.ToArray())));
             }
             if (this._LimitRowCount > 0) {
                 if (this._LimitOffset > 0) {
