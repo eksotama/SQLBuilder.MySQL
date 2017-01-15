@@ -120,7 +120,7 @@ namespace SQLBuilder.MySQL.Builder {
             } else if (Value is bool) {
                 this._SetUpdate(Field, Convert.ToByte(Value).ToString());
             } else if (this._IsNumeric(Value)) {
-                this._SetInsert(Field, String.Format("'{0}'", Value.ToString()));
+                this._SetUpdate(Field, String.Format("'{0}'", Value.ToString()));
             } else {
                 string strParameterName = String.Format("@update_{0}", Regex.Replace(Regex.Replace(Field, @"\W", "_"), @"(?<=\w)([A-Z])", delegate(Match m) {
                     return String.Format("{0}{1}", "_", m.Value);
